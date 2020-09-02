@@ -1,50 +1,57 @@
-Instructions for Practice Project
-========================================
+Instructions for Building an AMI with Ubuntu and Jenkins and Installed
+======================================================================
 
 These instructions assume familiarity with Git and GitHub. If you are not comfortable with those tools, please complete Udacity's [How to Use Git and GitHub](https://www.udacity.com/course/how-to-use-git-and-github--ud775) course before proceeding.
 
 After installing the required tools, you will need to ensure that your computer can find the executables to run them. For this, you might need to modify the PATH environment variable. A good overview is at [superuser.com](https://superuser.com/questions/284342/what-are-path-and-other-environment-variables-and-how-can-i-set-or-use-them). You may need to search the web for instructions on how to set the PATH variable for your specific operating system and version.
 
 ## Setting up your local machine
-
-* Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-* Install [Vagrant](https://www.vagrantup.com/downloads.html)
 * Install [Packer](https://www.packer.io/downloads.html)
-* Fork this repo to your own account
-* Clone the forked repo to your local machine using this command: `git clone http://github.com/<account-name>/devops-intro-project devops`, replacing `<account-name>` with your GitHub username.
+* Clone the forked repo to your local machine using this command: `git clone https://github.com/jnanjali/Jenkins-PackerAMI.git`
 
-## Part I: Building a box with Packer
+## Part I: Building an AMAZON AMI with Packer
+This part is responsible for building the Amazon AMI.
+Also make sure your AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are set
 
+```
+     {
+        "type": "amazon-ebs",
+        "access_key": "{{ user `AWS_ACCESS_KEY_ID` }}",
+        "secret_key": "{{ user `AWS_SECRET_ACCESS_KEY` }}",
+        "region": "us-east-1",
+        "instance_type": "t2.micro",
+        "ssh_username": "ubuntu",
+        "ami_name": "control-{{ user `PACKER_BOX_NAME` }}-{{timestamp}}",
+        "source_ami_filter": {
+ "owners": ["099720109477"],
+        "filters": {
+          "virtualization-type": "hvm",
+          "name": "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*",
+          "root-device-type": "ebs"
+        },
+
+        "most_recent": true
+      } 
+
+```
+
+* Run `cd Jenkins-PackerAMI/`
 * Run `cd packer-templates`
-* Run `packer build -only=virtualbox-iso application-server.json`. You may see various timeouts and errors, as shown below. If you do, retry the command until the ISO download succeeds:
+* Run `packer build -only=amazon-ebs control-server.json`. 
 
+
+## Part II: Launching your custom packer built AMI
+
+* Select your AMI in AWS Console
+* Select Launch
+* Verify its up and running
+* Add incoming rule in security group to allow all traffic
+* Find the public ip address of the EC2 Instance
+* Verify Jenkins is running by going to the following url
 ```
-read: operation timed out
-==> virtualbox-iso: ISO download failed.
-Build 'virtualbox-iso' errored: ISO download failed.
-
-checksums didn't match expected
-==> virtualbox-iso: ISO download failed.
-Build 'virtualbox-iso' errored: ISO download failed.
-
-==> Some builds didn't complete successfully and had errors:
---> virtualbox-iso: ISO download failed.
+http://ec2-52-206-42-176.compute-1.amazonaws.com:8080/jenkins/
 ```
 
-* Run `cd virtualbox`
-* Run `vagrant box add ubuntu-14.04.6-server-amd64-appserver_virtualbox.box --name devops-appserver`
-* Run `vagrant up`
-* Run `vagrant ssh` to connect to the server
-
-
-## Part II: Cloning, developing, and running the web application
-
-* On your local machine go to the root directory of the cloned repository
-* Run `git clone https://github.com/chef/devops-kungfu.git devops-kungfu`
-* Open http://localhost:8080 from your local machine to see the app running.
-* In the VM, run `cd devops-kungfu`
-* To install app specific node packages, run `sudo npm install`. You may see several errors; they can be ignored for now.
-* Now you can run tests with the command `grunt -v`. The tests will run, then quit with an error.
 
 ### Troubleshooting
 
