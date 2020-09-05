@@ -1,12 +1,15 @@
 Instructions for Building an AMI with Ubuntu and Jenkins and Installed
 ======================================================================
 
-These instructions assume familiarity with Git and GitHub. If you are not comfortable with those tools, please complete Udacity's [How to Use Git and GitHub](https://www.udacity.com/course/how-to-use-git-and-github--ud775) course before proceeding.
-
-After installing the required tools, you will need to ensure that your computer can find the executables to run them. For this, you might need to modify the PATH environment variable. A good overview is at [superuser.com](https://superuser.com/questions/284342/what-are-path-and-other-environment-variables-and-how-can-i-set-or-use-them). You may need to search the web for instructions on how to set the PATH variable for your specific operating system and version.
+These instructions assume familiarity with Git and GitHub.
 
 ## Setting up your local machine
 * Install [Packer](https://www.packer.io/downloads.html)
+* Put packer in the PATH
+```
+cp packer /usr/local/bin
+```
+
 * Clone the forked repo to your local machine using this command: `git clone https://github.com/jnanjali/Jenkins-PackerAMI.git`
 
 ## Part I: Building an AMAZON AMI with Packer
@@ -39,6 +42,17 @@ Also make sure your AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are set
 * Run `cd packer-templates`
 * Run `packer build -only=amazon-ebs control-server.json`. 
 
+After this build succeeds, you will see an output like this:-
+
+```
+Build 'amazon-ebs' finished.
+
+==> Builds finished. The artifacts of successful builds are:
+--> amazon-ebs: AMIs were created:
+us-east-1: ami-00e6259bc9e9f70c1
+
+--> amazon-ebs: 'aws' provider box: ../output/aws/control-ubuntu-14.04.6-server-amd64.box
+```
 
 ## Part II: Launching your custom packer built AMI
 
@@ -55,7 +69,11 @@ http://ec2-52-206-42-176.compute-1.amazonaws.com:8080/jenkins/
 
 ### Troubleshooting
 
-If you encounter errors with Ubuntu version numbers not being available or checksum errors on Ubuntu,it means that this repository has not yet been updated for the latest Ubuntu version. Feel free to mention this in the [forum](https://discussions.udacity.com/c/nd012-p1-intro-to-devops/nd012-the-devops-environment). Meanwhile, you can fix this error for yourself by editing the contents of the `application-server.json` and `control-server.json` template files inside the `packer-templates` folder.
+If you encounter errors with Ubuntu version numbers not being available or checksum errors on Ubuntu,it means that 
+this repository has not yet been updated for the latest Ubuntu version. Feel free to mention this in the 
+[forum](https://discussions.udacity.com/c/nd012-p1-intro-to-devops/nd012-the-devops-environment). Meanwhile, you can 
+fix this error for yourself by editing the contents of the `application-server.json` and `control-server.json` template 
+files inside the `packer-templates` folder.
 
 * Find the newest version number and checksum from the [Ubuntu website for this release](http://releases.ubuntu.com/trusty/)
 * Edit `PACKER_BOX_NAME` and `iso_checksum` in the template files to match that version number and checksum.
