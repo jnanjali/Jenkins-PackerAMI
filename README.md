@@ -40,6 +40,7 @@ Also make sure your AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are set
 
 * Run `cd Jenkins-PackerAMI/`
 * Run `cd packer-templates`
+* Run `packer validate --only amazon-ebs control-server.json `
 * Run `packer build -only=amazon-ebs control-server.json`. 
 
 After this build succeeds, you will see an output like this:-
