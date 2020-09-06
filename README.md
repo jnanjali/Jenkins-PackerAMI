@@ -26,16 +26,16 @@ Also make sure your AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are set
         "ssh_username": "ubuntu",
         "ami_name": "control-{{ user `PACKER_BOX_NAME` }}-{{timestamp}}",
         "source_ami_filter": {
- "owners": ["099720109477"],
-        "filters": {
-          "virtualization-type": "hvm",
-          "name": "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*",
-          "root-device-type": "ebs"
-        },
+           "owners": ["099720109477"],
+           "filters": {
+              "virtualization-type": "hvm",
+              "name": "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*",
+              "root-device-type": "ebs"
+            },
 
-        "most_recent": true
-      } 
-
+           "most_recent": true
+        } 
+     }
 ```
 
 * Run `cd Jenkins-PackerAMI/`
